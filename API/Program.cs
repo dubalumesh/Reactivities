@@ -8,10 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbConext>(options =>
 	options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=reactivities.db"));
 
+builder.Services.AddCors();
+
 builder.Services.AddControllers();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.MapControllers();
+
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
+.WithOrigins("http://localhost:3000", "https://localhost:3000"));
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
