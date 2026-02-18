@@ -3,9 +3,9 @@ using Domain;
 
 namespace Persistence
 {
-    public class AppDbConext : DbContext
+    public class AppDbContext : DbContext
     {
-        public AppDbConext(DbContextOptions<AppDbConext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 

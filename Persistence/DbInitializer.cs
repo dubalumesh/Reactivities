@@ -6,7 +6,7 @@ namespace Persistence
     public class DbInitializer
     {
         // TODO: implement seeding/initialization logic for the database
-        public static async Task Initialize(AppDbConext? context = null)
+        public static async Task Initialize(AppDbContext? context = null)
         {
             // Intentionally left empty — update when ready to seed the DB
             if (context == null)
