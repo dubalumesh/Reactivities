@@ -1,17 +1,20 @@
 
 import { Box, Button, Paper, TextField, Typography } from '@mui/material'
 import type { FormEvent } from 'react';
+import useActivities from '../../../lib/hooks/useActivities';
 
 type Props = {
     activity?: Activity,
     closeForm: () => void,
-    createOrEdit: (activity: Activity) => void
+
 }
 
 
-export default function ActivityForm({ activity, closeForm, createOrEdit }: Props) {
+export default function ActivityForm({ activity, closeForm }: Props) {
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const { updateActivity, createActivity } = useActivities();
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
 
@@ -19,7 +22,6 @@ export default function ActivityForm({ activity, closeForm, createOrEdit }: Prop
         formData.forEach((value, key) => {
             data[key] = value;
         });
-        console.log(data);
         // Call createOrEdit with the data
         const activityData: Activity = {
             id: activity?.id || crypto.randomUUID(),
@@ -33,8 +35,16 @@ export default function ActivityForm({ activity, closeForm, createOrEdit }: Prop
             latitude: 0,
             longitude: 0
         };
-        // Assuming createOrEdit is passed down from parent component
-        createOrEdit(activityData);
+        if (activity) {
+            // Assuming createOrEdit is passed down from parent component
+            await updateActivity.mutateAsync(activityData);
+            closeForm();
+        } else {
+            await createActivity.mutateAsync(activityData);
+            closeForm();
+        }
+
+
     }
 
     return (
@@ -52,7 +62,10 @@ export default function ActivityForm({ activity, closeForm, createOrEdit }: Prop
                     <TextField name='venue' label='Venue' defaultValue={activity?.venue || ''} />
                     <Box display='flex' justifyContent='end' gap={3}>
                         <Button onClick={() => { closeForm() }} color='inherit'>Cancel</Button>
-                        <Button type='submit' variant='contained' color='success'>Submit</Button>
+                        <Button type='submit'
+                            variant='contained'
+                            loading={updateActivity.isPending || createActivity.isPending}
+                            color='success'>Submit</Button>
 
                     </Box>
                 </Box>
