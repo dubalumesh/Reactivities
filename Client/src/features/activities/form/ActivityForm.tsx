@@ -2,17 +2,17 @@
 import { Box, Button, Paper, TextField, Typography } from '@mui/material'
 import type { FormEvent } from 'react';
 import useActivities from '../../../lib/hooks/useActivities';
-
-type Props = {
-    activity?: Activity,
-    closeForm: () => void,
-
-}
+import { useNavigate, useParams } from 'react-router';
 
 
-export default function ActivityForm({ activity, closeForm }: Props) {
 
-    const { updateActivity, createActivity } = useActivities();
+export default function ActivityForm() {
+
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { updateActivity, createActivity, activity, isLoadingActivity } = useActivities(id);
+
+    if (isLoadingActivity) return <Typography>Loading...</Typography>;
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -38,10 +38,16 @@ export default function ActivityForm({ activity, closeForm }: Props) {
         if (activity) {
             // Assuming createOrEdit is passed down from parent component
             await updateActivity.mutateAsync(activityData);
-            closeForm();
+            navigate(`/activities/${activityData.id}`);
+
         } else {
-            await createActivity.mutateAsync(activityData);
-            closeForm();
+            createActivity.mutate(activityData, {
+                onSuccess: (id) => {
+                    console.log('Created activity with id:', id);
+                    navigate(`/activities/${id}`);
+                }
+            });
+
         }
 
 
@@ -61,7 +67,7 @@ export default function ActivityForm({ activity, closeForm }: Props) {
                     <TextField name='city' label='City' defaultValue={activity?.city || ''} />
                     <TextField name='venue' label='Venue' defaultValue={activity?.venue || ''} />
                     <Box display='flex' justifyContent='end' gap={3}>
-                        <Button onClick={() => { closeForm() }} color='inherit'>Cancel</Button>
+                        <Button onClick={() => { }} color='inherit'>Cancel</Button>
                         <Button type='submit'
                             variant='contained'
                             loading={updateActivity.isPending || createActivity.isPending}
