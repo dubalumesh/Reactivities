@@ -1,0 +1,47 @@
+import { Box, Button, ButtonGroup, List, ListItem, Paper, Typography } from "@mui/material";
+import { useStore } from "../../lib/hooks/useStore"
+import { observer } from 'mobx-react-lite';
+
+const Counter = observer(() => {
+
+    const { counterStore } = useStore();
+
+    return (
+        <Box display='flex' justifyContent='space-between' >
+            <Box sx={{width:'60%'}}>
+                <Typography variant="h4" gutterBottom>{counterStore.title}</Typography>
+                <Typography variant="h6">The count is: {counterStore.count}</Typography>
+                <ButtonGroup>
+                    <Button variant="contained" onClick={() => {
+                        counterStore.decrement()
+                    }} color="error">Decrement</Button>
+                    <Button variant="contained" onClick={() => {
+                        counterStore.increment()
+                    }} color="success">Increment</Button>
+                    <Button variant="contained" onClick={() => {
+                        counterStore.increment(5)
+                    }} color="success">Increment +5</Button>
+                </ButtonGroup>
+            </Box>
+            <Paper sx={{width:'40%', p:4}}>
+                <Typography variant="h5">Counter events ({counterStore.eventCount})
+                     </Typography>
+                <List>
+                    {
+                        counterStore.events.map((event, index)=>(
+                            <ListItem key={index}>{event}</ListItem>
+                        ))
+                    }                    
+                </List>   
+
+            </Paper>
+        </Box>
+
+    )
+});
+
+export default Counter;
+
+
+
+

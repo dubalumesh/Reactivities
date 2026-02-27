@@ -7,7 +7,7 @@ export default function App() {
   const location = useLocation();
 
   return (
-    <Box sx={{ backgroundColor: '#eeeeee' }}>
+    <Box sx={{ backgroundColor: '#eeeeee', minHeight:'100vh' }}>
       <CssBaseline />
 
       {location.pathname === "/" ? <HomePage /> : (<> <NavBar />
